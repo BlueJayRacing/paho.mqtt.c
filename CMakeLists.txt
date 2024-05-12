@@ -17,8 +17,8 @@
 
 # Note: on OS X you should install XCode and the associated command-line tools
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
-PROJECT("Eclipse Paho C" C)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+PROJECT("paho_mqtt" C)
 MESSAGE(STATUS "CMake version: " ${CMAKE_VERSION})
 MESSAGE(STATUS "CMake system name: " ${CMAKE_SYSTEM_NAME})
 
@@ -41,6 +41,8 @@ IF(WIN32)
 ELSEIF(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   ADD_DEFINITIONS(-DOSX)
 ENDIF()
+
+find_package(ament_cmake REQUIRED)
 
 ## build options
 SET(PAHO_WITH_SSL FALSE CACHE BOOL "Flag that defines whether to build ssl-enabled binaries too. ")
@@ -120,6 +122,19 @@ SET(CPACK_PACKAGE_VERSION_MAJOR ${PAHO_VERSION_MAJOR})
 SET(CPACK_PACKAGE_VERSION_MINOR ${PAHO_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${PAHO_VERSION_PATCH})
 INCLUDE(CPack)
+
+
+# Export dependencies
+ament_export_include_directories(include)
+ament_export_libraries(paho-mqtt3a paho-mqtt3c)
+ament_export_dependencies(ament_cmake)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()
 
 IF(PAHO_ENABLE_TESTING)
     ENABLE_TESTING()
